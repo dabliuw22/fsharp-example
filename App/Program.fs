@@ -15,7 +15,7 @@ let main argv =
         pub
         |> Observable.subscribe (fun item -> printfn "Item: %i" item)
 
-    Say.hello "Will"
+    Say.hello "Name"
 
     let message = from "F#" // Call the function
     printfn "Hello world %s" message
