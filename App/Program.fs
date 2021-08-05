@@ -11,9 +11,9 @@ let main argv =
 
     let pub = Publisher.single 10
 
-    let _ =
-        pub
-        |> Observable.subscribe (fun item -> printfn "Item: %i" item)
+    pub
+    |> Observable.subscribe (fun item -> printfn "Item: %i" item)
+    |> ignore
 
     Say.hello "Name"
 
