@@ -9,20 +9,24 @@ open System.Reactive.Threading.Tasks
 open FSharp.Control.Reactive
 
 module Publisher =
-    let single<'a> (item: 'a) =
+    let single<'a> (item: 'a) : IObservable<'a> =
         (Observable.single item)
             .SubscribeOn(ThreadPoolScheduler.Instance)
 
-    let io<'a> (f: (unit -> 'a)) =
+    let io<'a> (f: (unit -> 'a)) : IObservable<'a> =
         (Observable.single (f ()))
             .SubscribeOn(NewThreadScheduler.Default)
 
-    let ofSeq<'a> (items: 'a seq) = Observable.ofSeq items
+    let ofSeq<'a> (items: 'a seq) : IObservable<'a> = Observable.toObservable items //Observable.ofSeq items
 
-    let async<'a> (task: Task<'a>) = Observable.FromAsync(fun () -> task)
+    let async<'a> (task: Async<'a>) : IObservable<'a> = Observable.ofAsync (task)
 
-    let toAsync<'a> (observable: IObservable<'a>) =
+    let task<'a> (task: Task<'a>) : IObservable<'a> = Observable.FromAsync(fun () -> task)
+
+    let toAsync<'a> (observable: IObservable<'a>) : Async<'a list> =
         observable
+        |> Observable.toList
+        |> Observable.map List.ofSeq
         |> TaskObservableExtensions.ToTask
         |> Async.AwaitTask
 
